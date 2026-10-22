@@ -1,19 +1,20 @@
 package com.example.blackjack;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
+/**
+ * Punto de arranque provisional de la aplicación.
+ * La ventana definitiva se construirá con FXML en la fase de vista.
+ */
 public class HelloApplication extends Application {
+
     @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
+    public void start(Stage stage) {
+        stage.setTitle("21 Blackjack");
+        stage.setScene(new Scene(new Label("Proyecto en construcción"), 360, 240));
         stage.show();
     }
 }
