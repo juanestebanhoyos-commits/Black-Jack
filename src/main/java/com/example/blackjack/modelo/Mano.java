@@ -31,4 +31,30 @@ public class Mano {
     public boolean estaVacia() {
         return inicio == null;
     }
+
+    /**
+     * Calcula el puntaje de la mano. Cada as se suma primero como 1;
+     * mientras quede un as que pueda valer 11 sin superar 21, se le suma 10.
+     */
+
+    public int getPuntaje() {
+        int puntaje = 0;
+        int ases = 0;
+
+        // Recorre la lista enlazada desde inicio
+        for (NodoCarta actual = inicio; actual != null; actual = actual.getSiguiente()) {
+            puntaje += actual.getCarta().getValorBase();
+            if (actual.getCarta().getRango() == Rango.AS) {
+                ases++;
+            }
+        }
+
+        // El as ya contó como 1; darle valor 11 equivale a sumarle 10.
+        while (ases > 0 && puntaje + 10 <= 21) {
+            puntaje += 10;
+            ases--;
+        }
+
+        return puntaje;
+    }
 }
