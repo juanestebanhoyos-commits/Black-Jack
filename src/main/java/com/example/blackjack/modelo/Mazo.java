@@ -22,6 +22,13 @@ public class Mazo {
         mezclar();
     }
 
+    /** Solo para las pruebas: un mazo con el orden de cartas ya decidido (no se mezcla). */
+    Mazo(Carta[] ordenFijo) {
+        for (int i = 0; i < TOTAL_CARTAS; i++) {
+            cartas[i] = ordenFijo[i];
+        }
+    }
+
     /** Coloca las 52 cartas (4 símbolos × 13 figuras) en el arreglo. */
     private void llenar() {
         int i = 0;
