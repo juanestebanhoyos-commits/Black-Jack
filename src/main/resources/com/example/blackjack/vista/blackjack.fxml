@@ -1,10 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<!-- Mesa provisional: la ventana completa llega en el siguiente commit. -->
-<VBox alignment="CENTER" prefHeight="600" prefWidth="800" spacing="10"
+<!-- Mesa del 21 Blackjack: zona del computador, zona del jugador y acciones. -->
+<VBox alignment="CENTER" spacing="10" prefHeight="600" prefWidth="800"
+      style="-fx-padding: 16; -fx-background-color: #2f6d4b;"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.blackjack.controlador.BlackjackControlador">
-    <Label text="Mesa en desarrollo"/>
+
+    <!-- Mensajes: turno actual, jugadas especiales y resultado -->
+    <Label fx:id="mensajes" text="Elige tu apuesta y comienza la ronda"
+           textFill="WHITE" style="-fx-font-size: 16px;"/>
+
+    <!-- Zona del computador -->
+    <Label text="COMPUTADOR" textFill="WHITE" style="-fx-font-size: 14px; -fx-underline: true;"/>
+    <HBox fx:id="cartasComputador" alignment="CENTER" spacing="6" minHeight="120"/>
+    <Label fx:id="puntajeComputador" text="Puntaje: —" textFill="WHITE" style="-fx-font-size: 13px;"/>
+
+    <Separator/>
+
+    <!-- Zona del jugador -->
+    <Label text="JUGADOR" textFill="WHITE" style="-fx-font-size: 14px; -fx-underline: true;"/>
+    <HBox fx:id="cartasJugador" alignment="CENTER" spacing="6" minHeight="120"/>
+    <Label fx:id="puntajeJugador" text="Puntaje: —" textFill="WHITE" style="-fx-font-size: 13px;"/>
+
+    <Separator/>
+
+    <!-- Saldo, apuesta vigente y campo para la nueva apuesta -->
+    <HBox alignment="CENTER" spacing="12">
+        <Label text="Saldo:" textFill="WHITE"/>
+        <Label fx:id="saldo" text="1000" textFill="#ffd35e" style="-fx-font-weight: bold;"/>
+        <Label text="Apuesta:" textFill="WHITE"/>
+        <Label fx:id="apuestaVigente" text="—" textFill="#ffd35e" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="campoApuesta" prefWidth="120" promptText="nueva apuesta" alignment="CENTER"/>
+    </HBox>
+
+    <!-- Las cinco acciones del enunciado -->
+    <HBox alignment="CENTER" spacing="10">
+        <Button fx:id="botonIniciar" text="Iniciar ronda"/>
+        <Button fx:id="botonPedir" text="Pedir carta" disable="true"/>
+        <Button fx:id="botonPlantarse" text="Plantarse" disable="true"/>
+        <Button fx:id="botonReglas" text="Ver reglas"/>
+        <Button fx:id="botonCerrar" text="Cerrar juego"/>
+    </HBox>
 </VBox>
