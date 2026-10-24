@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Mesa provisional: la ventana completa llega en el siguiente commit. -->
+<VBox alignment="CENTER" prefHeight="600" prefWidth="800" spacing="10"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.blackjack.controlador.BlackjackControlador">
+    <Label text="Mesa en desarrollo"/>
+</VBox>
