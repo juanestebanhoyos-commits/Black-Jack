@@ -44,7 +44,7 @@
         <Button fx:id="botonIniciar" text="Iniciar ronda" onAction="#iniciarRonda"/>
         <Button fx:id="botonPedir" text="Pedir carta" disable="true" onAction="#pedirCarta"/>
         <Button fx:id="botonPlantarse" text="Plantarse" disable="true" onAction="#plantarse"/>
-        <Button fx:id="botonReglas" text="Ver reglas"/>
-        <Button fx:id="botonCerrar" text="Cerrar juego"/>
+        <Button fx:id="botonReglas" text="Ver reglas" onAction="#verReglas"/>
+        <Button fx:id="botonCerrar" text="Cerrar juego" onAction="#cerrarJuego"/>
     </HBox>
 </VBox>

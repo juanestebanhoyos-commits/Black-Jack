@@ -1,5 +1,6 @@
 package com.example.blackjack;
 
+import com.example.blackjack.controlador.BlackjackControlador;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,6 +19,14 @@ public class BlackjackApp extends Application {
         FXMLLoader cargador = new FXMLLoader(BlackjackApp.class.getResource("vista/blackjack.fxml"));
         stage.setTitle("21 Blackjack — duelo contra el computador");
         stage.setScene(new Scene(cargador.load(), 800, 600));
+
+        // La ✕ de la ventana pide la misma confirmación que el botón «Cerrar juego».
+        stage.setOnCloseRequest(evento -> {
+            if (!((BlackjackControlador) cargador.getController()).cierreConfirmado()) {
+                evento.consume();
+            }
+        });
+
         stage.show();
     }
 }

@@ -4,8 +4,11 @@ import com.example.blackjack.modelo.Carta;
 import com.example.blackjack.modelo.Juego21;
 import com.example.blackjack.modelo.Mano;
 import com.example.blackjack.modelo.NodoCarta;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -70,6 +73,60 @@ public class BlackjackControlador {
         refrescar();
     }
 
+    /** Las reglas del enunciado, resumidas tal como se aplican en el juego. */
+    private static final String REGLAS = """
+            • El mazo de 52 cartas se baraja completo al inicio de cada ronda.
+
+            Valores: del 2 al 10 su número; J, Q y K valen 10; el as vale 1 u 11,
+            ajustado para lograr el mayor puntaje sin pasar de 21. Los palos no cambian el puntaje.
+
+            Apuesta: mínimo 10 fichas, múltiplo de 10 y nunca mayor a tu saldo.
+            Se descuenta al iniciar la ronda y no se puede cambiar durante ella.
+
+            Pagos: si pierdes, la apuesta queda perdida; si empatas, la recuperas;
+            victoria ordinaria te acredita el doble; victoria con Blackjack, 2,5 veces.
+
+            Jugadas especiales con las dos primeras cartas:
+            • Blackjack: un as con un 10 (la carta 10, J, Q o K). Gana todo menos otro Blackjack.
+            • Veintiuno: llegar a 21 sin ser Blackjack.
+            • Veinte y medio: una figura (J, Q o K) junto a un 4. Solo avisa, no paga extra.
+
+            Tu turno: pides cartas o te plantas. Al llegar a 21 termina tu turno;
+            si te pasas de 21, pierdes al instante.
+
+            El computador recibe sus dos cartas cuando te plantas: pedirá cartas
+            mientras tenga menos de 17 y se plantará con 17 o más.""";
+
+    /** Muestra las reglas en una ventana aparte; la partida queda igual. */
+    @FXML
+    private void verReglas() {
+        Alert venta = new Alert(Alert.AlertType.INFORMATION, REGLAS);
+        venta.setHeaderText("Reglas del 21 Blackjack");
+        venta.setTitle("Ver reglas");
+        venta.show();
+    }
+
+    /** Cierra el juego con confirmación del jugador. */
+    @FXML
+    private void cerrarJuego() {
+        if (cierreConfirmado()) {
+            Platform.exit();
+        }
+    }
+
+    /**
+     * Pregunta si el jugador confirma terminar el juego.
+     * Cancelar devuelve false y así conserva el estado de la partida.
+     * Es público porque también lo usa la ✕ de la ventana (BlackjackApp).
+     */
+    public boolean cierreConfirmado() {
+        Alert pregunta = new Alert(Alert.AlertType.CONFIRMATION,
+                "El estado del juego se perderá si cierras.");
+        pregunta.setTitle("Cerrar juego");
+        pregunta.setHeaderText("¿Seguro que quieres cerrar el juego?");
+        return pregunta.showAndWait().filter(boton -> boton == ButtonType.OK).isPresent();
+    }
+
     // =================== Repintado de la vista ===================
 
     /** Dibuja la mesa completa con el estado actual del modelo. */
@@ -81,6 +138,16 @@ public class BlackjackControlador {
         saldo.setText(String.valueOf(juego.getSaldo()));
         apuestaVigente.setText(juego.getApuesta() == 0 ? "—" : String.valueOf(juego.getApuesta()));
         mensajes.setText(mensaje());
+        deshabilitarSegunEstado();
+    }
+
+    /** Ajusta qué botones y el campo de apuesta funcionan según la fase de la ronda. */
+    private void deshabilitarSegunEstado() {
+        boolean turnoDelJugador = juego.getEstado() == Juego21.Estado.TURNO_JUGADOR;
+        botonPedir.setDisable(!turnoDelJugador);
+        botonPlantarse.setDisable(!turnoDelJugador);
+        botonIniciar.setDisable(turnoDelJugador || juego.getSaldo() < Juego21.APUESTA_MINIMA);
+        campoApuesta.setDisable(turnoDelJugador);
     }
 
     /** Vacía la zona y vuelve a colocar una imagen por cada carta. */
