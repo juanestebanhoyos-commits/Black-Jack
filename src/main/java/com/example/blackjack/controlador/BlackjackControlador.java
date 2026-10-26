@@ -35,8 +35,6 @@ public class BlackjackControlador {
     @FXML private Button botonIniciar;
     @FXML private Button botonPedir;
     @FXML private Button botonPlantarse;
-    @FXML private Button botonReglas;
-    @FXML private Button botonCerrar;
 
     @FXML
     private void initialize() {
@@ -159,18 +157,13 @@ public class BlackjackControlador {
     }
 
     private String mensaje() {
-        switch (juego.getEstado()) {
-            case SIN_RONDA:
-                return "Elige tu apuesta y presiona «Iniciar ronda»";
-            case TURNO_JUGADOR:
-                return juego.jugadorTieneVeinteYMedio()
-                        ? "¡Veinte y medio! Puedes pedir carta o plantarte"
-                        : "Tu turno: pide carta o plantarte";
-            case RONDA_TERMINADA:
-                return mensajeDeResultado();
-            default:
-                return "";
-        }
+        return switch (juego.getEstado()) {
+            case SIN_RONDA -> "Elige tu apuesta y presiona «Iniciar ronda»";
+            case TURNO_JUGADOR -> juego.jugadorTieneVeinteYMedio()
+                    ? "¡Veinte y medio! Puedes pedir carta o plantarte"
+                    : "Tu turno: pide carta o plantarte";
+            case RONDA_TERMINADA -> mensajeDeResultado();
+        };
     }
 
     private String mensajeDeResultado() {
