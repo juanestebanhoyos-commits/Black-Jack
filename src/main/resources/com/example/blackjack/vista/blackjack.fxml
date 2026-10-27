@@ -1,50 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 
-<!-- Mesa del 21 Blackjack: zona del computador, zona del jugador y acciones. -->
-<VBox alignment="CENTER" spacing="10" prefHeight="600" prefWidth="800"
-      style="-fx-padding: 16; -fx-background-color: #2f6d4b;"
+<!--
+  Ventana principal del 21 Blackjack (única ventana del juego):
+  encabezado (saldo, título, reglas), mesa (computador y jugador),
+  panel de mensajes y fichas decorativas.
+  Los diálogos (apuesta, reglas, resultado y cierre) los construye vista/Dialogos.java.
+-->
+<VBox spacing="12" prefWidth="1000" prefHeight="640" styleClass="mesa" stylesheets="@blackjack.css"
       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.blackjack.controlador.BlackjackControlador">
 
-    <!-- Mensajes: turno actual, jugadas especiales y resultado -->
-    <Label fx:id="mensajes" text="Elige tu apuesta y comienza la ronda"
-           textFill="WHITE" style="-fx-font-size: 16px;"/>
+    <!-- Encabezado: saldo y apuesta | título | ver reglas y cerrar -->
+    <BorderPane>
+        <left>
+            <VBox prefWidth="190" spacing="6" alignment="CENTER_LEFT" styleClass="panel">
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="Saldo:" styleClass="etiqueta-marcador"/>
+                    <Label fx:id="saldo" text="1.000" styleClass="valor-marcador"/>
+                </HBox>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="Apuesta:" styleClass="etiqueta-marcador"/>
+                    <Label fx:id="apuestaVigente" text="0" styleClass="valor-marcador"/>
+                </HBox>
+            </VBox>
+        </left>
+        <center>
+            <VBox alignment="CENTER" spacing="0">
+                <HBox alignment="CENTER" spacing="14">
+                    <Label text="♠" styleClass="palo-titulo"/>
+                    <Label text="BLACKJACK" styleClass="titulo"/>
+                    <Label text="♠" styleClass="palo-titulo"/>
+                </HBox>
+                <Label text="21 - Duelo contra el computador" styleClass="subtitulo"/>
+            </VBox>
+        </center>
+        <right>
+            <VBox prefWidth="190" spacing="8" alignment="TOP_RIGHT">
+                <Button fx:id="botonReglas" text="Ver reglas" prefWidth="150" styleClass="boton-gris"
+                        onAction=""/>
+                <Button fx:id="botonCerrar" text="Cerrar juego" prefWidth="150" styleClass="boton-gris"
+                        onAction=""/>
+            </VBox>
+        </right>
+    </BorderPane>
 
-    <!-- Zona del computador -->
-    <Label text="COMPUTADOR" textFill="WHITE" style="-fx-font-size: 14px; -fx-underline: true;"/>
-    <HBox fx:id="cartasComputador" alignment="CENTER" spacing="6" minHeight="120"/>
-    <Label fx:id="puntajeComputador" text="Puntaje: —" textFill="WHITE" style="-fx-font-size: 13px;"/>
+    <!-- Mesa y mensajes -->
+    <HBox spacing="18" VBox.vgrow="ALWAYS">
 
-    <Separator/>
+        <!-- Zonas del computador y del jugador, con sus acciones -->
+        <VBox alignment="CENTER" spacing="14" HBox.hgrow="ALWAYS">
+            <Label text="Computador" styleClass="nombre-zona"/>
+            <HBox alignment="CENTER" spacing="22">
+                <HBox fx:id="cartasComputador" alignment="CENTER" spacing="8"
+                      minWidth="380" prefWidth="380" maxWidth="380" minHeight="124" prefHeight="124"/>
+                <VBox alignment="CENTER" spacing="2" minWidth="100" styleClass="caja-puntaje">
+                    <Label text="Puntaje:" styleClass="puntaje-texto"/>
+                    <Label fx:id="puntajeComputador" text="—" styleClass="puntaje-valor"/>
+                </VBox>
+            </HBox>
 
-    <!-- Zona del jugador -->
-    <Label text="JUGADOR" textFill="WHITE" style="-fx-font-size: 14px; -fx-underline: true;"/>
-    <HBox fx:id="cartasJugador" alignment="CENTER" spacing="6" minHeight="120"/>
-    <Label fx:id="puntajeJugador" text="Puntaje: —" textFill="WHITE" style="-fx-font-size: 13px;"/>
+            <Label text="Jugador" styleClass="nombre-zona"/>
+            <HBox alignment="CENTER" spacing="22">
+                <HBox fx:id="cartasJugador" alignment="CENTER" spacing="8"
+                      minWidth="380" prefWidth="380" maxWidth="380" minHeight="124" prefHeight="124"/>
+                <VBox alignment="CENTER" spacing="2" minWidth="100" styleClass="caja-puntaje">
+                    <Label text="Puntaje:" styleClass="puntaje-texto"/>
+                    <Label fx:id="puntajeJugador" text="—" styleClass="puntaje-valor"/>
+                </VBox>
+            </HBox>
 
-    <Separator/>
+            <!-- Acciones de la ronda. «Nueva ronda» abre el diálogo de apuesta. -->
+            <HBox alignment="CENTER" spacing="14">
+                <Button fx:id="botonPedir" text="Pedir carta" disable="true" styleClass="boton-verde"
+                        onAction=""/>
+                <Button fx:id="botonPlantarse" text="Plantarse" disable="true" styleClass="boton-rojo"
+                        onAction=""/>
+                <Button fx:id="botonNuevaRonda" text="Nueva ronda" styleClass="boton-azul"
+                        onAction=""/>
+            </HBox>
+        </VBox>
 
-    <!-- Saldo, apuesta vigente y campo para la nueva apuesta -->
-    <HBox alignment="CENTER" spacing="12">
-        <Label text="Saldo:" textFill="WHITE"/>
-        <Label fx:id="saldo" text="1000" textFill="#ffd35e" style="-fx-font-weight: bold;"/>
-        <Label text="Apuesta:" textFill="WHITE"/>
-        <Label fx:id="apuestaVigente" text="—" textFill="#ffd35e" style="-fx-font-weight: bold;"/>
-        <TextField fx:id="campoApuesta" prefWidth="120" promptText="nueva apuesta" alignment="CENTER"/>
+        <!-- Panel de mensajes: turno, jugadas especiales y resultado -->
+        <VBox minWidth="270" prefWidth="270" maxWidth="270" styleClass="panel-mensajes">
+            <Label text="Mensajes" maxWidth="Infinity" styleClass="cabecera-mensajes"/>
+            <ScrollPane fx:id="scrollMensajes" fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS"
+                        styleClass="scroll-mensajes">
+                <content>
+                    <VBox fx:id="listaMensajes" spacing="8" styleClass="lista-mensajes"/>
+                </content>
+            </ScrollPane>
+        </VBox>
     </HBox>
 
-    <!-- Las cinco acciones del enunciado -->
-    <HBox alignment="CENTER" spacing="10">
-        <Button fx:id="botonIniciar" text="Iniciar ronda" onAction="#iniciarRonda"/>
-        <Button fx:id="botonPedir" text="Pedir carta" disable="true" onAction="#pedirCarta"/>
-        <Button fx:id="botonPlantarse" text="Plantarse" disable="true" onAction="#plantarse"/>
-        <Button fx:id="botonReglas" text="Ver reglas" onAction="#verReglas"/>
-        <Button fx:id="botonCerrar" text="Cerrar juego" onAction="#cerrarJuego"/>
+    <!-- Fichas decorativas -->
+    <HBox alignment="CENTER_LEFT" spacing="8">
+        <StackPane>
+            <Circle radius="20" styleClass="ficha-azul"/>
+            <Label text="10" styleClass="ficha-texto"/>
+        </StackPane>
+        <StackPane>
+            <Circle radius="20" styleClass="ficha-roja"/>
+            <Label text="50" styleClass="ficha-texto"/>
+        </StackPane>
+        <StackPane>
+            <Circle radius="20" styleClass="ficha-verde"/>
+            <Label text="100" styleClass="ficha-texto"/>
+        </StackPane>
+        <StackPane>
+            <Circle radius="20" styleClass="ficha-negra"/>
+            <Label text="500" styleClass="ficha-texto"/>
+        </StackPane>
     </HBox>
 </VBox>

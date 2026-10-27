@@ -17,8 +17,10 @@ public class BlackjackApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader cargador = new FXMLLoader(BlackjackApp.class.getResource("vista/blackjack.fxml"));
-        stage.setTitle("21 Blackjack — duelo contra el computador");
-        stage.setScene(new Scene(cargador.load(), 800, 600));
+        stage.setTitle("Blackjack");
+        stage.setScene(new Scene(cargador.load(), 1000, 640));
+        stage.setMinWidth(900);
+        stage.setMinHeight(620);
 
         // La ✕ de la ventana pide la misma confirmación que el botón «Cerrar juego».
         stage.setOnCloseRequest(evento -> {
