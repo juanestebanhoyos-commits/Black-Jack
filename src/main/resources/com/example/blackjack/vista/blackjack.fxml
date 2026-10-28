@@ -45,9 +45,9 @@
         <right>
             <VBox prefWidth="190" spacing="8" alignment="TOP_RIGHT">
                 <Button fx:id="botonReglas" text="Ver reglas" prefWidth="150" styleClass="boton-gris"
-                        onAction=""/>
+                        onAction="#verReglas"/>
                 <Button fx:id="botonCerrar" text="Cerrar juego" prefWidth="150" styleClass="boton-gris"
-                        onAction=""/>
+                        onAction="#cerrarJuego"/>
             </VBox>
         </right>
     </BorderPane>
@@ -80,11 +80,11 @@
             <!-- Acciones de la ronda. «Nueva ronda» abre el diálogo de apuesta. -->
             <HBox alignment="CENTER" spacing="14">
                 <Button fx:id="botonPedir" text="Pedir carta" disable="true" styleClass="boton-verde"
-                        onAction=""/>
+                        onAction="#pedirCarta"/>
                 <Button fx:id="botonPlantarse" text="Plantarse" disable="true" styleClass="boton-rojo"
-                        onAction=""/>
+                        onAction="#plantarse"/>
                 <Button fx:id="botonNuevaRonda" text="Nueva ronda" styleClass="boton-azul"
-                        onAction=""/>
+                        onAction="#nuevaRonda"/>
             </HBox>
         </VBox>
 
