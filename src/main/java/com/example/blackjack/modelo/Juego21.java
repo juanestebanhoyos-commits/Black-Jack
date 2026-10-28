@@ -184,6 +184,23 @@ public class Juego21 {
             return Resultado.VICTORIA;            // la banca se pasó
         }
 
+        // =====regla agregada Veinte y medio (figura + 4 en las dos primeras cartas) =====
+        boolean jugador20yMedio = manoJugador.esVeinteYMedio();
+        boolean computador20yMedio = manoComputador.esVeinteYMedio();
+        if (jugador20yMedio && computador20yMedio) {
+            return Resultado.EMPATE;              // ambos tienen veinte y medio
+        }
+        if (jugador20yMedio) {
+            // Le gana a cualquier mano menor de 21; pierde contra un 21.
+            return getPuntajeComputador() == 21 ? Resultado.DERROTA : Resultado.VICTORIA;
+        }
+        if (computador20yMedio) {
+            return getPuntajeJugador() == 21 ? Resultado.VICTORIA : Resultado.DERROTA;
+        }
+        // ========================================================================
+
+
+
         // Veintiuno y veinte y medio se comparan por puntaje normal.
         if (getPuntajeJugador() > getPuntajeComputador()) {
             return Resultado.VICTORIA;
