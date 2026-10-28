@@ -107,6 +107,11 @@ public class Juego21 {
             return;
         }
 
+        // Una apuesta inválida (muy baja, no múltiplo o mayor al saldo) no arranca nada.
+        if (validarApuesta(apuestaPedida) != null) {
+            return;
+        }
+
         apuesta = apuestaPedida;
         saldo -= apuesta; // la apuesta se descuenta al comenzar
 

@@ -84,6 +84,14 @@ class Juego21Test {
         assertTrue(pasada.getManoComputador().estaVacia());
         assertEquals(Juego21.Resultado.DERROTA, pasada.getResultado());
         assertEquals(900, pasada.getSaldo()); // la apuesta quedó descontada
+
+        // La banca se pasa: con Siete + Ocho (15) pide el Nueve y queda en 24 → gana el jugador.
+        Juego21 bancaPasada = juegoCon(Rango.REY, Rango.REINA, Rango.SIETE, Rango.OCHO, Rango.NUEVE);
+        bancaPasada.iniciarRonda(100); // jugador: 20
+        bancaPasada.plantarse();
+
+        assertEquals(Juego21.Resultado.VICTORIA, bancaPasada.getResultado()); // 24 > 21
+        assertEquals(1100, bancaPasada.getSaldo()); // 1000 - 100 + 200
     }
 
     /** Blackjack, doble Blackjack, veintiuno, veinte y medio y empate normal. */
@@ -127,6 +135,15 @@ class Juego21Test {
 
         assertEquals(Juego21.Resultado.EMPATE, empate.getResultado());
         assertEquals(1000, empate.getSaldo()); // 1000 - 100 + 100
+
+        // Blackjack de la banca (as + JOTA) contra la mano normal del jugador: pierde este.
+        Juego21 bancaBlackjack = juegoCon(Rango.REY, Rango.REINA, Rango.AS, Rango.JOTA);
+        bancaBlackjack.iniciarRonda(100); // jugador: 20
+        bancaBlackjack.plantarse();
+
+        assertTrue(bancaBlackjack.getManoComputador().esBlackjack());
+        assertEquals(Juego21.Resultado.DERROTA, bancaBlackjack.getResultado());
+        assertEquals(900, bancaBlackjack.getSaldo()); // la apuesta queda perdida
     }
     /** Veinte y medio (figura + 4): gana a cualquier mano menor de 21, pierde contra 21. */
     @Test

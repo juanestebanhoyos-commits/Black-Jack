@@ -60,8 +60,4 @@ public class Mazo {
     public boolean tieneCartas() {
         return siguiente < cartas.length;
     }
-
-    public int getCartasRestantes() {
-        return cartas.length - siguiente;
-    }
 }
