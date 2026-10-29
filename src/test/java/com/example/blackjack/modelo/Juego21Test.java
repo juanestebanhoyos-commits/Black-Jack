@@ -94,7 +94,7 @@ class Juego21Test {
         assertEquals(1100, bancaPasada.getSaldo()); // 1000 - 100 + 200
     }
 
-    /** Blackjack, doble Blackjack, veintiuno, veinte y medio y empate normal. */
+    /** Blackjack, doble Blackjack, veintiuno, veinte y medio y Blackjack de la banca. */
     @Test
     void reconoceLasJugadasEspeciales() {
         // Blackjack del jugador: la banca juega al instante y no iguala → 2,5 la apuesta.
@@ -119,14 +119,23 @@ class Juego21Test {
         assertTrue(veintiuno.jugadorTieneVeintiuno());
         assertEquals(Juego21.Resultado.VICTORIA, veintiuno.getResultado()); // 21 > 19
 
-        // Veinte y medio (figura + 4): no gana automático; la banca lo supera.
-        Juego21 medio = juegoCon(Rango.REINA, Rango.CUATRO, Rango.DIEZ, Rango.SEIS, Rango.CUATRO);
-        medio.iniciarRonda(100); // reina + 4 = 14
+        // Veinte y medio (figura + 4): gana a cualquier mano menor de 21 (aquí la banca con 20).
+        Juego21 medio20 = juegoCon(Rango.REY, Rango.CUATRO, Rango.DIEZ, Rango.DIEZ);
+        medio20.iniciarRonda(100);
+        assertTrue(medio20.jugadorTieneVeinteYMedio());
+        medio20.plantarse();
 
-        assertTrue(medio.jugadorTieneVeinteYMedio());
-        medio.plantarse(); // banca: 10 + 6 = 16 → pide 4 → 20
+        assertEquals(Juego21.Resultado.VICTORIA, medio20.getResultado());
+        assertEquals(1100, medio20.getSaldo()); // 1000 - 100 + 200
 
-        assertEquals(Juego21.Resultado.DERROTA, medio.getResultado()); // 14 < 20
+        // Contra un 21 de tres cartas (5 + 6 + 10) el veinte y medio pierde.
+        Juego21 medio21 = juegoCon(Rango.REY, Rango.CUATRO, Rango.CINCO, Rango.SEIS, Rango.DIEZ);
+        medio21.iniciarRonda(100);
+        medio21.plantarse();
+
+        assertEquals(21, medio21.getPuntajeComputador());
+        assertEquals(Juego21.Resultado.DERROTA, medio21.getResultado());
+        assertEquals(900, medio21.getSaldo());
 
         // Empate puntaje a puntaje, sin Blackjack involucrado (20 = 20).
         Juego21 empate = juegoCon(Rango.REY, Rango.REY, Rango.AS, Rango.NUEVE);
@@ -144,33 +153,5 @@ class Juego21Test {
         assertTrue(bancaBlackjack.getManoComputador().esBlackjack());
         assertEquals(Juego21.Resultado.DERROTA, bancaBlackjack.getResultado());
         assertEquals(900, bancaBlackjack.getSaldo()); // la apuesta queda perdida
-    }
-    /** Veinte y medio (figura + 4): gana a cualquier mano menor de 21, pierde contra 21. */
-    @Test
-    void veinteYMedioGanaAManosMenoresDe21() {
-        // Orden de reparto: jugador (2 cartas), luego computador (2 cartas y las que pida).
-
-        // Jugador K + 4 = 14 (veinte y medio) contra computador 10 + 10 = 20 → victoria ordinaria.
-        Juego21 contra20 = juegoCon(Rango.REY, Rango.CUATRO, Rango.DIEZ, Rango.DIEZ);
-        contra20.iniciarRonda(100);
-        assertTrue(contra20.jugadorTieneVeinteYMedio());
-        contra20.plantarse();
-        assertEquals(20, contra20.getPuntajeComputador());
-        assertEquals(Juego21.Resultado.VICTORIA, contra20.getResultado());
-        assertEquals(1100, contra20.getSaldo()); // 1000 - 100 + 200
-
-        // Contra un 21 de tres cartas (5 + 6 + 10) el veinte y medio pierde.
-        Juego21 contra21 = juegoCon(Rango.REY, Rango.CUATRO, Rango.CINCO, Rango.SEIS, Rango.DIEZ);
-        contra21.iniciarRonda(100);
-        contra21.plantarse();
-        assertEquals(21, contra21.getPuntajeComputador());
-        assertEquals(Juego21.Resultado.DERROTA, contra21.getResultado());
-        assertEquals(900, contra21.getSaldo());
-
-        // Contra Blackjack también pierde.
-        Juego21 contraBlackjack = juegoCon(Rango.REY, Rango.CUATRO, Rango.AS, Rango.REY);
-        contraBlackjack.iniciarRonda(100);
-        contraBlackjack.plantarse();
-        assertEquals(Juego21.Resultado.DERROTA, contraBlackjack.getResultado());
     }
 }

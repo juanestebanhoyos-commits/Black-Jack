@@ -5,7 +5,6 @@ module com.example.blackjack {
     // FXML accede por reflexión al controlador y javafx.graphics
     // construye BlackjackApp al arrancar (no borrar: el arranque falla).
     opens com.example.blackjack.controlador to javafx.fxml;
-    opens com.example.blackjack.vista to javafx.fxml;
 
     exports com.example.blackjack;
 }

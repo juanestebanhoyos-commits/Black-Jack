@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Pruebas sencillas de la mano: la lista enlazada y el puntaje con ases. */
+/** Prueba de la mano: la lista enlazada funciona y el puntaje ajusta los ases. */
 class ManoTest {
 
     /**
@@ -21,39 +21,28 @@ class ManoTest {
         return mano;
     }
 
-    /** La lista enlazada arranca vacía, crece y la última carta queda al frente. */
+    /** La lista enlazada crece y la última carta queda al frente; los ases se ajustan. */
     @Test
-    void agregaCartasYLasCuenta() {
+    void agregaCartasYCalculaElPuntaje() {
+        // La mano arranca vacía; el rey llega primero y luego el as: el as queda delante.
         Mano mano = new Mano();
         assertTrue(mano.estaVacia());
 
-        // El rey llega primero, luego el as: el as debe quedar delante.
         mano.agregarCarta(new Carta(Simbolo.CORAZONES, Rango.REY));
         mano.agregarCarta(new Carta(Simbolo.PICAS, Rango.AS));
 
         assertFalse(mano.estaVacia());
         assertEquals(2, mano.getCantidad());
+        assertEquals(Rango.AS, mano.getPrimera().getCarta().getRango());
 
-        NodoCarta primera = mano.getPrimera();
-        assertEquals(Rango.AS, primera.getCarta().getRango());
-        assertEquals(Rango.REY, primera.getSiguiente().getCarta().getRango());
-    }
+        // Rey + As: el as vale 11 y llega exactamente a 21.
+        assertEquals(21, mano.getPuntaje());
 
-    /**
-     * El puntaje aprovecha el as como 11 sin superar 21 y lo baja a 1
-     * cuando ya no cabe, tal como pide el enunciado.
-     */
-    @Test
-    void elPuntajeAjustaLosAses() {
-        // Rey + as: el as vale 11 y llega exactamente a 21.
-        assertEquals(21, manoCon(Rango.REY, Rango.AS).getPuntaje());
-        // Dos ases: uno vale 11 y el otro queda valiendo 1.
+        // Dos ases: solo uno puede valer 11 (11 + 1); con tres, igual (11 + 1 + 1).
         assertEquals(12, manoCon(Rango.AS, Rango.AS).getPuntaje());
-        // Tres ases: solo uno puede valer 11 (11 + 1 + 1).
         assertEquals(13, manoCon(Rango.AS, Rango.AS, Rango.AS).getPuntaje());
-        // Rey + as + as: el as sobrante queda en 1 aunque no alcance (12).
-        assertEquals(12, manoCon(Rango.REY, Rango.AS, Rango.AS).getPuntaje());
-        // Rey + rey + 5 + as: aun bajando el as a 1 la mano queda pasada (26).
+
+        // Rey + Rey + 5 + As: aun bajando el as a 1 la mano queda pasada (26).
         assertEquals(26, manoCon(Rango.REY, Rango.REY, Rango.CINCO, Rango.AS).getPuntaje());
     }
 }

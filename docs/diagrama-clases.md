@@ -3,7 +3,8 @@
 El proyecto sigue el patrón **Modelo–Vista–Controlador**:
 
 * **Modelo** (`com.example.blackjack.modelo`): cartas, mazo, manos y las reglas del juego.
-* **Vista** (`vista/blackjack.fxml`): describe la mesa con JavaFX (zonas, puntajes, botones).
+* **Vista** (`vista/blackjack.fxml` + `vista/blackjack.css` + `vista/Dialogos`): la mesa principal
+  y los cuatro cuadros de diálogo (apuesta, reglas, resultado y confirmación de cierre).
 * **Controlador** (`controlador/BlackjackControlador`): atiende los eventos de la vista,
   pide operaciones al modelo y repinta la mesa con las respuestas.
 
@@ -18,19 +19,51 @@ classDiagram
     }
     class BlackjackControlador {
         -juego : Juego21
-        +iniciarRonda()
-        +pedirCarta()
-        +plantarse()
-        +verReglas()
-        +cerrarJuego()
+        -secuencia : Timeline
+        -turnoComputadorEnCurso : boolean
+        -saldoAntesDeApostar : int
+        -initialize()
+        -nuevaRonda()
+        -iniciarRonda(apuesta)
+        -pedirCarta()
+        -plantarse()
+        -verReglas()
+        -cerrarJuego()
         +cierreConfirmado() boolean
+        -validarApuesta(texto) String
+        -despuesDeActuar()
+        -jugarTurnoComputador()
+        -revelarCartasDelComputador(cartas, cantidad)
+        -terminarRonda()
+        -datosDelResultado() DatosResultado
         -refrescar()
-        -dibujarMano(zona, mano)
+        -actualizarBotones()
+        -dibujarCartas(zona, cartas)
         -vistaDeCarta(carta) ImageView
+    }
+    class Dialogos {
+        +fichas(cantidad) String
+        +pedirApuesta(padre, saldo, validar) Optional
+        +mostrarReglas(padre)
+        +mostrarResultado(padre, datos)
+        +confirmarCierre(padre) boolean
+    }
+    class Tono {
+        <<enumeration>>
+        GANA
+        PIERDE
+        EMPATE
+    }
+    class DatosResultado {
+        <<record>>
+        tono, titulo, puntajeJugador,
+        puntajeComputador, causa, resultado,
+        etiquetaGanancia, ganancia, detalleGanancia
     }
     class Juego21 {
         +SALDO_INICIAL = 1000
         +APUESTA_MINIMA = 10
+        -mazoFijo : Mazo
         -mazo : Mazo
         -manoJugador : Mano
         -manoComputador : Mano
@@ -38,12 +71,18 @@ classDiagram
         -apuesta : int
         -estado : Estado
         -resultado : Resultado
+        +Juego21()
+        ~Juego21(mazoFijo)
         +iniciarRonda(apuestaPedida)
         +pedirCarta()
         +plantarse()
         +validarApuesta(apuestaPedida) String
         +getSaldo() int
         +getApuesta() int
+        +getEstado() Estado
+        +getResultado() Resultado
+        +getManoJugador() Mano
+        +getManoComputador() Mano
         +getPuntajeJugador() int
         +getPuntajeComputador() int
         +jugadorTieneVeintiuno() boolean
@@ -66,8 +105,12 @@ classDiagram
         EMPATE
     }
     class Mazo {
+        +TOTAL_CARTAS = 52
         -cartas : Carta[52]
-        -repartidas : int
+        -siguiente : int
+        +Mazo()
+        ~Mazo(ordenFijo)
+        -llenar()
         +repartirCarta() Carta
         +mezclar()
         +tieneCartas() boolean
@@ -77,20 +120,31 @@ classDiagram
         -cantidad : int
         +agregarCarta(carta)
         +getPrimera() NodoCarta
+        +getCantidad() int
+        +estaVacia() boolean
         +getPuntaje() int
+        +contiene(figura) boolean
+        +contieneValor(valor) boolean
+        +contieneFigura() boolean
         +esBlackjack() boolean
         +esVeinteYMedio() boolean
     }
     class NodoCarta {
         -carta : Carta
         -siguiente : NodoCarta
+        +NodoCarta(carta)
         +getCarta() Carta
         +getSiguiente() NodoCarta
+        +setSiguiente(siguiente)
     }
     class Carta {
         -simbolo : Simbolo
         -rango : Rango
+        +Carta(simbolo, rango)
+        +getSimbolo() Simbolo
+        +getRango() Rango
         +getValorBase() int
+        +toString() String
     }
     class Simbolo {
         <<enumeration>>
@@ -111,8 +165,12 @@ classDiagram
 
     BlackjackApp --> BlackjackControlador : carga y consulta el cierre
     BlackjackControlador --> Juego21 : pide operaciones
+    BlackjackControlador --> Dialogos : abre las ventanas de diálogo
+    Dialogos --> Juego21 : constantes del modelo (saldo y apuesta mínima)
+    Dialogos --> Tono
+    Dialogos --> DatosResultado
     Juego21 *-- "2" Mano : jugador y computador
-    Juego21 --> Mazo : baraja por ronda
+    Juego21 --> Mazo : mazo nuevo por ronda
     Juego21 --> Estado
     Juego21 --> Resultado
     Mano o-- NodoCarta : lista enlazada
@@ -120,12 +178,3 @@ classDiagram
     Carta --> Simbolo
     Carta --> Rango
 ```
-
-Detalles de diseño que valen la pena señalar:
-
-* `Mazo` guarda las 52 cartas en un **arreglo**; `Mano` es una **lista enlazada** hecha en clase
-  (`NodoCarta`), tal como pide el enunciado.
-* `Juego21` administra el saldo, la apuesta vigente, el turno y el resultado: la vista solo muestra
-  y el controlador solo traduce.
-* Los constructores `Juego21(Mazo)` y `Mazo(Carta[])` son de acceso de paquete porque solo
-  las pruebas los usan para fijar el orden de las cartas.
